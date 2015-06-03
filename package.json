@@ -1,0 +1,18 @@
+{
+  "name": "suit-refac",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.71.0",
+    "three-orbit-controls": "^69.0.4"
+  },
+  "devDependencies": {
+    "webpack": "^1.8.11"
+  }
+}
