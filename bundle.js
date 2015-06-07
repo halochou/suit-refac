@@ -44,11 +44,12 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var box = __webpack_require__(1);
+	box = __webpack_require__(1);
 
 	box.init({
 	  'canvas': document.getElementById('canvas_for_three')
 	});
+
 
 
 /***/ },
@@ -60,6 +61,7 @@
 	var scene, canvas, renderer, camera, controls;
 	var onWindowResize;
 	var render;
+	var currentState = {};
 
 	var init = function (params) {
 	  // var scene = require('./lib/scene.js');
@@ -131,7 +133,7 @@
 	  scene.add( cube );
 
 	  render();
-	}
+	};
 
 	render = function () {
 	  requestAnimationFrame( render );
@@ -145,10 +147,52 @@
 		camera.updateProjectionMatrix();
 
 		render();
-	}
+	};
+
+	var _updateModelFromLoader = function (targetName, objPath, mtlPath){
+	  var loader = new THREE.OBJMTLLoader();
+	  loader.load(objPath, mtlPath,
+	    //onSuccess
+	    function (newModel) {
+	      newModel.name = targetName;
+	      scene.remove(scene.getObjectByName(targetName));
+	      scene.add(newModel);
+	    },
+	    //onProgress
+	    function (xhr) {
+	      // if ( xhr.lengthComputable ) {
+	      //   var percentComplete = xhr.loaded / xhr.total * 100;
+	      //   console.log( Math.round(percentComplete, 2) + '% downloaded' );
+	      // }
+	    },
+	    //onError
+	    function (xhr) {
+	    } );
+	};
+
+	// /assets/models/suit_main_double-breasted_2_side_fabric_black
+	var updateAll = function(newState) {
+	    console.log(newState);
+	    return;
+
+	    var mainOBJPath = '/assets/models/suit_main/' + newState.button + '_' + newState.tail + '.obj';
+	    var mainMTLPath = '/assets/models/suit_main/' + newState.button + '_' + newState.tail + '_' + newState.fabric + '.mtl';
+	    _updateModelFromLoader('suit_main', mainOBJPath, mainMTLPath);
+
+	    var collarOBJPath = '/assets/models/suit_collar/' + newState.button + '_' + newState.collar + '.obj';
+	    var collarMTLPath = '/assets/models/suit_collar/' + newState.button + '_' + newState.collar + '_' + newState.fabric + '.mtl';
+	    _updateModelFromLoader('suit_collar', mainOBJPath, mainMTLPath);
+
+	    var pocketOBJPath = '/assets/models/suit_pocket/' + newState.pocket + '.obj';
+	    var pocketOBJPath = '/assets/models/suit_pocket/' + newState.pocket + '_' + newState.fabric + '.mtl';
+	    _updateModelFromLoader('suit_pocket', mainOBJPath, mainMTLPath);
+
+	  //return newState;
+	};
 
 	module.exports  = {
-	  init : init
+	  init : init,
+	  update : updateAll
 	};
 
 
